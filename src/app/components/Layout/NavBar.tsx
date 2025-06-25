@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   FaUser,
@@ -8,24 +8,33 @@ import {
   FaChevronRight,
   FaChartBar,
   FaCogs,
-  FaStore,
-  FaUsers,
   FaNewspaper,
   FaSignOutAlt,
   FaUserShield,
   FaBars,
   FaKey,
-  FaUserFriends,
-  FaSitemap,
-  FaListAlt,
+  FaCog,
   FaClipboardList,
-  FaDollarSign,
-  FaBell,
 } from "react-icons/fa";
 
+// Icon mapping based on menu names
+const iconMap = {
+  dashboard: <FaChartBar />,
+  user: <FaUser />,
+  roles: <FaUserShield />,
+  menus: <FaBars />,
+  permission: <FaKey />,
+  news: <FaNewspaper />,
+  settings: <FaCog />,
+  reports: <FaClipboardList />,
+  manage_roles_permissions: <FaUserShield />,
+  logout: <FaSignOutAlt />,
+};
+
+// Styles (same as provided)
 const styles = {
   sidebar:
-    "bg-white dark:bg-black text-sidebar-foreground shadow-md h-screen transition-all duration-300 z-50 fixed top-0 border-r border-r-[1px]  dark:border-white",
+    "bg-white dark:bg-black text-sidebar-foreground shadow-md h-screen transition-all duration-300 z-50 fixed top-0 border-r border-r-[1px] dark:border-white",
   sidebarWidthOpen: "w-64",
   sidebarWidthClosed: "w-16",
   sidebarVisibility: "hidden md:block",
@@ -54,42 +63,240 @@ const styles = {
   navText: "text-sm",
 };
 
+// Mock menu data
+const menuData = [
+  {
+    id: "6854ffe8b1d7f8a34770a120",
+    name: "dashboard",
+    icon: "Uploads/menu-icons/dfbab178-ecf8-454d-98a6-061ea5632ea1.png",
+    path: "dashboard",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a121",
+    name: "user",
+    icon: "Uploads/menu-icons/user.png",
+    path: "user",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a122",
+    name: "manage_roles_permissions",
+    icon: "Uploads/menu-icons/manage_roles.png",
+    path: null,
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a123",
+    name: "roles",
+    icon: "Uploads/menu-icons/roles.png",
+    path: "roles",
+    parent_id: "6854ffe8b1d7f8a34770a122",
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a124",
+    name: "menus",
+    icon: "Uploads/menu-icons/menus.png",
+    path: "menus",
+    parent_id: "6854ffe8b1d7f8a34770a122",
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a125",
+    name: "permission",
+    icon: "Uploads/menu-icons/permission.png",
+    path: "permission",
+    parent_id: "6854ffe8b1d7f8a34770a122",
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a126",
+    name: "news",
+    icon: "Uploads/menu-icons/news.png",
+    path: "news",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a127",
+    name: "settings",
+    icon: "Uploads/menu-icons/settings.png",
+    path: "settings",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a128",
+    name: "reports",
+    icon: "Uploads/menu-icons/reports.png",
+    path: "reports",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+  {
+    id: "6854ffe8b1d7f8a34770a129",
+    name: "logout",
+    icon: "Uploads/menu-icons/logout.png",
+    path: "auth/login",
+    parent_id: null,
+    active: true,
+    created_at: "2025-06-20T11:55:43.457000",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+];
+
+// Mock permission data
+const permissionData = [
+  {
+    id: "6855017ab1d7f8a34770a12f",
+    role_id: "6854ff25b1d7f8a34770a112",
+    menu_data: {
+      "6854ffe8b1d7f8a34770a120": ["add", "edit", "view", "delete"], // Dashboard
+      "6854ffe8b1d7f8a34770a121": ["view"], // User
+      "6854ffe8b1d7f8a34770a122": ["view"], // Manage Roles & Permissions
+      "6854ffe8b1d7f8a34770a123": ["view"], // Roles
+      "6854ffe8b1d7f8a34770a124": ["view"], // Menus
+      "6854ffe8b1d7f8a34770a125": ["view"], // Permission
+      "6854ffe8b1d7f8a34770a126": ["view"], // News
+      "6854ffe8b1d7f8a34770a127": ["view"], // Settings
+      "6854ffe8b1d7f8a34770a128": [], // Reports (no view permission)
+      "6854ffe8b1d7f8a34770a129": ["view"], // Logout
+    },
+    active: true,
+    created_at: "2025-06-20T11:55:43.486320",
+    created_by: null,
+    updated_at: null,
+    updated_by: null,
+  },
+];
+
+// Function to capitalize first letter of each word
+const capitalizeWords = (str) =>
+  str
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
 const NavBar = ({
   isOpen,
   toggleSidebar,
-}: {
-  isOpen: boolean;
-  toggleSidebar: () => void;
+  roleId = "6854ff25b1d7f8a34770a112", // Mock roleId, replace with actual user role
 }) => {
   const router = useRouter();
-  const [openDropdowns, setOpenDropdowns] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [openDropdowns, setOpenDropdowns] = useState({});
   const [isHovered, setIsHovered] = useState(false);
+  const [navItems, setNavItems] = useState([]);
 
-  const toggleDropdown = (name: string) => {
+  const toggleDropdown = (name) => {
     setOpenDropdowns((prev) => ({
       ...prev,
       [name]: !prev[name],
     }));
   };
 
-  const navItems = [
-    { name: "Dashboard", path: "/dashboard", icon: <FaChartBar /> },
-    { name: "User", path: "/user", icon: <FaUser /> },
+  // Process menu and permission data
+  useEffect(() => {
+    // Fetch permissions for the user's role
+    const userPermissions = permissionData.find(
+      (perm) => perm.role_id === roleId && perm.active
+    );
 
-    {
-      name: "Manage Roles & Permissions",
-      icon: <FaUserShield />,
-      children: [
-        { name: "Roles", path: "/roles", icon: <FaUser /> },
-          { name: "Menus", path: "/menus", icon: <FaBars /> },
-          { name: "Permission", path: "/permission", icon: <FaKey /> },
-      ],
-    },
-    { name: "News", path: "/news", icon: <FaNewspaper /> },
-    { name: "Logout", path: "/auth/login", icon: <FaSignOutAlt /> },
-  ];
+    if (!userPermissions) {
+      setNavItems([]);
+      return;
+    }
+
+    // Build menu tree
+    const menuMap = new Map();
+    menuData.forEach((menu) => {
+      if (menu.active) {
+        menuMap.set(menu.id, { ...menu, children: [] });
+      }
+    });
+
+    const rootMenus = [];
+    menuMap.forEach((menu) => {
+      if (menu.parent_id && menuMap.has(menu.parent_id)) {
+        menuMap.get(menu.parent_id).children.push(menu);
+      } else if (!menu.parent_id) {
+        rootMenus.push(menu);
+      }
+    });
+
+    // Filter menus based on permissions and map to nav items
+    const allowedNavItems = rootMenus
+      .filter((menu) => {
+        // Check if user has 'view' permission for this menu
+        return userPermissions.menu_data[menu.id]?.includes("view");
+      })
+      .map((menu) => {
+        const navItem = {
+          name: capitalizeWords(menu.name), // Format name (e.g., "Manage Roles Permissions")
+          path: menu.path ? `/${menu.path}` : null,
+          icon: iconMap[menu.name.toLowerCase()] || <FaCogs />, // Fallback icon
+        };
+
+        // Process children if any
+        if (menu.children.length > 0) {
+          navItem.children = menu.children
+            .filter((child) =>
+              userPermissions.menu_data[child.id]?.includes("view")
+            )
+            .map((child) => ({
+              name: capitalizeWords(child.name),
+              path: `/${child.path}`,
+              icon: iconMap[child.name.toLowerCase()] || <FaCogs />,
+            }));
+        }
+
+        return navItem;
+      });
+
+    setNavItems(allowedNavItems);
+  }, [roleId]);
 
   return (
     <div
@@ -161,18 +368,20 @@ const NavBar = ({
                   )}
                 </div>
               ) : (
-                <button
-                  onClick={() => {
-                    router.push(item.path);
-                    toggleSidebar();
-                  }}
-                  className={styles.navButton}
-                >
-                  <span className={styles.navIcon}>{item.icon}</span>
-                  {(isOpen || isHovered) && (
-                    <span className={styles.navText}>{item.name}</span>
-                  )}
-                </button>
+                item.path && (
+                  <button
+                    onClick={() => {
+                      router.push(item.path);
+                      toggleSidebar();
+                    }}
+                    className={styles.navButton}
+                  >
+                    <span className={styles.navIcon}>{item.icon}</span>
+                    {(isOpen || isHovered) && (
+                      <span className={styles.navText}>{item.name}</span>
+                    )}
+                  </button>
+                )
               )}
             </div>
           ))}

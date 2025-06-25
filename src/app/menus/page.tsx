@@ -2,7 +2,6 @@
 
 import ClientLayout from "@/app/components/layout/Layout";
 import DataTable from "@/app/components/table/table";
-// import { API_ENDPOINTS } from "@/constants/api"; // Commented out: API_ENDPOINTS
 import React, { useState, useEffect, useCallback } from "react";
 import { useLoading } from "@/app/components/loader/loading-context";
 import FormTemplate from "@/app/components/forms/form";
@@ -54,8 +53,8 @@ const sampleMenuData = {
         created_by: null,
         updated_at: "2025-06-21T10:30:00.000000",
         updated_by: null,
-        order_by: 1, // Added for completeness based on form fields
-        params: { key: "value" }, // Added for completeness based on form fields
+        order_by: 1,
+        params: { key: "value" },
       },
       {
         id: "a1b2c3d4e5f6g7h8i9j0k1l2",
@@ -100,7 +99,6 @@ const MenuPage: React.FC = () => {
     "Params",
     "Created At",
     "Updated At",
-    "Actions",
   ];
   const [tableData, setTableData] = useState<TableRow[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -119,7 +117,7 @@ const MenuPage: React.FC = () => {
     {
       name: "order_by",
       label: "Order",
-      type: "number" as const, // Changed type to number for order_by
+      type: "number" as const,
       required: true,
       placeholder: "Enter order number",
     },
@@ -150,23 +148,6 @@ const MenuPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Commented out actual API call and using sample data instead
-      // const token = getToken();
-      // if (!token) throw new Error("Access token not found");
-
-      // const response = await fetch(API_ENDPOINTS.MENU_LIST, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // if (!response.ok) {
-      //   const errorData = await response.text();
-      //   throw new Error(`Failed to fetch menus: ${errorData}`);
-      // }
-
-      // const json = await response.json();
       const json = sampleMenuData; // Using sample data
 
       console.log("MENU_LIST Response:", JSON.stringify(json, null, 2));
@@ -247,38 +228,13 @@ const MenuPage: React.FC = () => {
       parsedParams = row.Params ? JSON.parse(row.Params) : {};
     } catch (err: Error | unknown) {
       const error = err instanceof Error ? err : new Error("Unknown error");
-      console.log("Error:Invalid JSON format:", error);
+      console.log("Error: Invalid JSON format:", error);
       toast.error("Invalid JSON format for params");
       return;
     }
 
-    // Simulate API call for editing
     setIsLoading(true);
     try {
-      // Commented out actual API call
-      // const response = await fetch(`${API_ENDPOINTS.MENU_LIST}/${row.id}`, {
-      //   method: "PUT",
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     name: row.Title,
-      //     order_by: parseInt(row.Order),
-      //     icon: row.Icon,
-      //     path: row.Path,
-      //     params: parsedParams,
-      //     active: row.active,
-      //   }),
-      // });
-
-      // if (!response.ok) {
-      //   const errorData = await response.text();
-      //   throw new Error(`Failed to update menu: ${errorData}`);
-      // }
-
-      // const result = await response.json();
-      // Simulate result from API for update
       const result = {
         data: {
           ...row,
@@ -288,7 +244,7 @@ const MenuPage: React.FC = () => {
           path: row.Path,
           params: parsedParams,
           active: row.active,
-          updated_at: new Date().toISOString(), // Simulate update time
+          updated_at: new Date().toISOString(),
         },
       };
 
@@ -349,42 +305,13 @@ const MenuPage: React.FC = () => {
       return;
     }
 
-    // Simulate API call for toggling active status
     setIsLoading(true);
     try {
-      // Commented out actual API call
-      // console.log(
-      //   "Sending PUT request to:",
-      //   `${API_ENDPOINTS.MENU_LIST}/${row.id}`
-      // );
-      // const response = await fetch(`${API_ENDPOINTS.MENU_LIST}/${row.id}`, {
-      //   method: "PUT",
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     name: row.Title,
-      //     order_by: parseInt(row.Order),
-      //     icon: row.Icon,
-      //     path: row.Path,
-      //     params: parsedParams,
-      //     active,
-      //   }),
-      // });
-
-      // if (!response.ok) {
-      //   const errorData = await response.text();
-      //   throw new Error(`Failed to toggle menu: ${errorData}`);
-      // }
-
-      // const result = await response.json();
-      // Simulate result from API for toggle
       const result = {
         data: {
           ...row,
           active: active,
-          updated_at: new Date().toISOString(), // Simulate update time
+          updated_at: new Date().toISOString(),
           params: parsedParams,
         },
       };
@@ -435,43 +362,19 @@ const MenuPage: React.FC = () => {
       return;
     }
 
-    // Simulate API call for adding a new menu
     try {
-      // Commented out actual API call
-      // const response = await fetch(API_ENDPOINTS.MENU_LIST, {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     name: newRow.title,
-      //     order_by: parseInt(newRow.order_by),
-      //     icon: newRow.icon,
-      //     path: newRow.path,
-      //     params: parsedParams,
-      //   }),
-      // });
-
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.message || "Failed to add menu");
-      // }
-
-      // Simulate success response for adding a menu
       const simulatedNewMenu = {
-        id: Math.random().toString(36).substring(2, 11), // Generate a unique ID
+        id: Math.random().toString(36).substring(2, 11),
         name: newRow.title,
         order_by: parseInt(newRow.order_by),
         icon: newRow.icon,
         path: newRow.path,
         params: parsedParams,
-        active: true, // New items are typically active by default
+        active: true,
         created_at: new Date().toISOString(),
         updated_at: null,
       };
 
-      // Add the new menu to the table data
       setTableData((prevData) => [
         ...prevData,
         {
@@ -499,6 +402,8 @@ const MenuPage: React.FC = () => {
   };
 
   const parentTitle = "Manage Roles & Permissions";
+
+  console.log("Rendering MenuPage with tableData:", tableData);
 
   return (
     <ClientLayout>
@@ -529,7 +434,6 @@ const MenuPage: React.FC = () => {
                   Params: "Params",
                   "Created At": "Created At",
                   "Updated At": "Updated At",
-                  Actions: "Actions",
                 }}
               />
             ) : (
@@ -552,7 +456,7 @@ const MenuPage: React.FC = () => {
                     icon: "",
                     path: "",
                     params: "{}",
-                    active: false, // New menus generally start as active, adjust if needed
+                    active: false,
                   }}
                 />
               </div>
